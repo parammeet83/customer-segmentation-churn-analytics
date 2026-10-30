@@ -71,7 +71,7 @@ Only items verified by running code are ticked.
 ## Phase 10 — Deployment
 - [x] Deployment configuration in repo (`backend/app.py`, `backend/.vercelignore`, `frontend/vercel.json`)
 - [x] Step-by-step guide with secret placement (`docs/DEPLOYMENT.md`)
-- [ ] Neon Free project (**blocked: owner must sign in to Neon**)
+- [x] Neon Free project: roles, schema, migration 0001, run f72df6d9 persisted, permissions verified (2026-10-30)
 - [ ] Vercel API + frontend projects (**blocked: owner must sign in to Vercel**)
 - [ ] Production smoke tests (after deployment)
 

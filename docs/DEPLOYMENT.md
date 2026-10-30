@@ -22,7 +22,7 @@
 |---|---|
 | Local end-to-end: pipeline → PostgreSQL 17 → API → dashboard | **Working and verified** |
 | CI on GitHub Actions | **Green** (run `41064961471`) |
-| Neon project | **Not created.** Needs the owner to sign in to Neon |
+| Neon project | **Set up and verified (2026-10-30).** Postgres 17.11, region `ap-southeast-1`, database `customerpulse`, roles `cp_migrator` / `cp_writer` / `cp_reader`, migration `0001` at head, run `f72df6d9` persisted, permission checks passed |
 | Vercel projects | **Not created.** Needs the owner to sign in to Vercel |
 | Live URLs | None yet; none are claimed |
 
@@ -39,7 +39,9 @@ marked 🔐 below.
    the region nearest to the Vercel functions (for example AWS
    `us-east-1`/`iad1`, or `eu-central-1` with Vercel `fra1`). Create the
    database `customerpulse`.
-3. Open **Connect**. Copy the connection string for the default owner role.
+3. Open **Connect**, select the `customerpulse` database (not the default
+   `neondb`) and turn connection pooling **off**, so you get the direct host.
+   Copy the connection string for the default owner role.
    This is the *admin* URL. Paste it **only** into your local `.env` as
    `ADMIN_DATABASE_URL=...`. Don't paste it into chat or commit it.
 4. In `.env`, set three new random passwords. Generate each one with:
@@ -92,6 +94,10 @@ This is only needed to run `Analysis (manual)` with **persist** enabled.
    `parammeet83/customer-segmentation-churn-analytics`, and name the project
    `customerpulse-api`.
 3. Set **Root Directory** to `backend`. Vercel detects FastAPI from `app.py`.
+   Under **Settings → Functions → Function Region**, choose **Singapore
+   (`sin1`)**, the region of the Neon database (`ap-southeast-1`). Every API
+   request opens a fresh database connection, so co-location matters. Measured
+   from India against the Neon database, requests took about 2 s each.
 4. Under **Environment Variables** (Production):
    * `DATABASE_URL`: the reader URL, using the pooled host.
    * `CORS_ORIGINS`: leave this as a placeholder for now. Set it to the
