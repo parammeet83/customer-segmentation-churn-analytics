@@ -21,7 +21,7 @@ class CustomerRisk:
 
 
 def top_k(n: int, fraction: float) -> int:
-    return 0 if n == 0 else max(1, math.ceil(n * fraction))
+    return 0 if n == 0 else max(1, math.ceil(round(n * fraction, 9)))  # round: 30 * 0.1 must give 3, not 4
 
 
 def simulate_rows(

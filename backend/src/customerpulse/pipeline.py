@@ -31,7 +31,7 @@ from customerpulse.analytics.retention import (
     seasonal_factor,
     simulate,
 )
-from customerpulse.churn.evaluate import decile_table, rank_order
+from customerpulse.churn.evaluate import decile_table, rank_order, top_k_count
 from customerpulse.churn.models import FAMILY_ORDER, run_churn_experiment
 from customerpulse.churn.splits import temporal_split
 from customerpulse.cleaning.clean import clean
@@ -302,7 +302,7 @@ def stage_score(cfg: PipelineConfig = DEFAULT_CONFIG) -> dict:
     rank[order] = np.arange(1, len(scoring) + 1)
     scoring["risk_rank"] = rank
     scoring["risk_percentile"] = 1 - (rank - 1) / len(scoring)
-    k = int(np.ceil(len(scoring) * c.top_fraction))
+    k = top_k_count(len(scoring), c.top_fraction)
     scoring["in_top_decile"] = scoring["risk_rank"] <= k
     scoring["above_threshold"] = scoring["churn_probability"] >= churn_report["threshold"]
     scoring["risk_band"] = pd.cut(

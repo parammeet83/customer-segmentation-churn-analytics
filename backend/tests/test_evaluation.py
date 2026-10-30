@@ -80,3 +80,8 @@ def test_top_fraction_per_snapshot_and_deciles():
     assert m["selected"] == 2 and m["true_churners_selected"] == 2 and m["capture_rate"] == 1.0
     d = decile_table(frame)
     assert len(d) == 10 and d[0]["churn_rate"] == 1.0 and sum(x["n"] for x in d) == 20
+
+
+def test_top_k_count_is_robust_to_float_error():
+    assert top_k_count(30, 0.1) == 3
+    assert top_k_count(70, 0.1) == 7

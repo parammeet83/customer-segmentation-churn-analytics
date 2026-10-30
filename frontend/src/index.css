@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/*
+ * CustomerPulse design tokens, derived from the project reference image:
+ * deep navy canvas with a faint blueprint grid, white headlines, gold
+ * subtitles/highlights, and red / teal / gold / blue cluster colours.
+ * Cluster colours are validated for CVD separation and contrast on the
+ * navy chart surface (see docs/ARCHITECTURE.md, "Design system").
+ */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --color-navy-950: #071226;
+  --color-navy-900: #0b1a33;
+  --color-navy-850: #0e2140;
+  --color-navy-800: #10244a;
+  --color-navy-700: #18325f;
+  --color-navy-600: #234478;
+  --color-line: #1d3a6e;
+
+  --color-ink: #eef3ff;
+  --color-ink-2: #b9c7e3;
+  --color-ink-3: #8ea3c7;
+
+  --color-gold: #f5c542;
+  --color-gold-soft: #f8d877;
+  --color-gold-ink: #1b1505;
+
+  --color-c0: #e0585e;
+  --color-c1: #169c8f;
+  --color-c2: #b88a10;
+  --color-c3: #7b83ec;
+
+  --color-good: #3fbf7f;
+  --color-warn: #f0a33a;
+  --color-bad: #ef5f67;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--color-navy-900);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint blueprint grid, as in the reference image. */
+.grid-canvas {
+  background-color: var(--color-navy-900);
+  background-image:
+    linear-gradient(rgba(126, 160, 220, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 160, 220, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(126, 160, 220, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(126, 160, 220, 0.03) 1px, transparent 1px);
+  background-size:
+    96px 96px,
+    96px 96px,
+    24px 24px,
+    24px 24px;
+}
+
+.panel {
+  background-color: color-mix(in srgb, var(--color-navy-800) 92%, transparent);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.recharts-surface:focus,
+.recharts-wrapper:focus {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .panel {
+    border: 1px solid CanvasText;
+  }
+}

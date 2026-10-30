@@ -36,7 +36,7 @@ def top_k_count(n: int, fraction: float) -> int:
     """Number selected for a fraction of n: ceil, at least 1 when n > 0."""
     if not 0 < fraction <= 1:
         raise ValueError("fraction must be in (0, 1]")
-    return 0 if n == 0 else max(1, math.ceil(n * fraction))
+    return 0 if n == 0 else max(1, math.ceil(round(n * fraction, 9)))  # round: 30 * 0.1 must give 3, not 4
 
 
 def top_fraction_metrics(
