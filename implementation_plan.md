@@ -82,8 +82,8 @@ Training never runs inside a web request. The API only reads the latest
 | 7. Database and backend | Done, tested (local PostgreSQL 17; roles verified) |
 | 8. Frontend | Done, tested (8 pages; desktop/tablet/phone) |
 | 9. CI and reproducibility | Done (CI green; manual analysis workflow defined) |
-| 10. Deployment | Prepared; **blocked on owner sign-in to Neon and Vercel** |
-| 11. Final verification | Done locally; production verification pending deployment |
+| 10. Deployment | Done: Neon PostgreSQL 17.11 + Vercel (web + API), smoke tests passed 2026-10-30 |
+| 11. Final verification | Done, including production verification and screenshots |
 
 See `TASKS.md` for the detailed checklist.
 

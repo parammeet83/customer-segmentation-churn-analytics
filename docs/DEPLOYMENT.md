@@ -23,8 +23,10 @@
 | Local end-to-end: pipeline → PostgreSQL 17 → API → dashboard | **Working and verified** |
 | CI on GitHub Actions | **Green** (run `41064961471`) |
 | Neon project | **Set up and verified (2026-10-30).** Postgres 17.11, region `ap-southeast-1`, database `customerpulse`, roles `cp_migrator` / `cp_writer` / `cp_reader`, migration `0001` at head, run `f72df6d9` persisted, permission checks passed |
-| Vercel projects | **Not created.** Needs the owner to sign in to Vercel |
-| Live URLs | None yet; none are claimed |
+| Vercel projects | **Deployed.** `customerpulse-web` (root `frontend/`) and `customerpulse-api` (root `backend/`), connected through Vercel's Git integration (Vercel commit statuses appear on `main`) |
+| Live URLs | Dashboard https://customerpulse-web.vercel.app · API health https://customerpulse-api.vercel.app/api/v1/health · API docs https://customerpulse-api.vercel.app/api/docs (verified 2026-10-30) |
+| Production smoke test | **Passed (2026-10-30):** health `ok`; summary serves run `f72df6d9`; docs 200; page_size=1000 → 422; POST → 405; CORS only for the dashboard origin; all dashboard routes 200 |
+| API function region | Currently `iad1` (observed via `X-Vercel-Id`); the database is in `ap-southeast-1`. Uncached requests took about 2.2–2.3 s and CDN-cached responses about 0.3 s. Switching to `sin1` is recommended |
 
 Account authorisation can't be done by an automated assistant, and
 credentials must never be pasted into chat. The owner completes the steps

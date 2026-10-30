@@ -72,12 +72,13 @@ Only items verified by running code are ticked.
 - [x] Deployment configuration in repo (`backend/app.py`, `backend/.vercelignore`, `frontend/vercel.json`)
 - [x] Step-by-step guide with secret placement (`docs/DEPLOYMENT.md`)
 - [x] Neon Free project: roles, schema, migration 0001, run f72df6d9 persisted, permissions verified (2026-10-30)
-- [ ] Vercel API + frontend projects (**blocked: owner must sign in to Vercel**)
-- [ ] Production smoke tests (after deployment)
+- [x] Vercel API + frontend projects (customerpulse-api, customerpulse-web)
+- [x] Production smoke tests (2026-10-30: health, summary run f72df6d9, docs, 422/405, CORS, all routes)
+- [ ] Optional: move the API function region from iad1 to sin1 (next to Neon ap-southeast-1)
 
 ## Phase 11 — Final verification
 - [x] Deterministic re-run at a committed SHA (results byte-identical apart from run id/time/SHA)
 - [x] Full local test suite, lint, types
 - [x] README with real screenshots and results; 15 Markdown documents
 - [x] Commits pushed with the correct identity, no co-author trailers
-- [ ] Live production verification (after deployment)
+- [x] Live production verification and production screenshots (docs/images/production/)

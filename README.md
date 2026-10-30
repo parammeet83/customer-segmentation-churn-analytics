@@ -14,12 +14,26 @@ dashboard, with tests and CI.
 
 [![CI](https://github.com/parammeet83/customer-segmentation-churn-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/parammeet83/customer-segmentation-churn-analytics/actions/workflows/ci.yml)
 
-![CustomerPulse overview](docs/images/overview.png)
+## 🚀 Live demo
 
-> **Live demo:** not deployed yet. Deployment to Neon Free and Vercel Hobby is
-> fully prepared, but it needs the repository owner to authorise those
-> accounts. See [Deployment](#25-deployment). No live URL is claimed until one
-> has been verified.
+| | URL |
+|---|---|
+| **Dashboard** | **https://customerpulse-web.vercel.app** |
+| API health | https://customerpulse-api.vercel.app/api/v1/health |
+| API documentation (OpenAPI) | https://customerpulse-api.vercel.app/api/docs |
+| Source | https://github.com/parammeet83/customer-segmentation-churn-analytics |
+
+These were verified on 2026-10-30:
+
+* The health endpoint reports `{"status":"ok","database":"ok"}`.
+* The API serves analysis run `f72df6d9` (status `succeeded`, built from
+  commit `9e9f7b6`) from Neon PostgreSQL 17.11.
+* All eight dashboard pages load against the live API without errors.
+
+Revenue figures in the demo are **scenario estimates under stated
+assumptions, not observed savings**.
+
+![CustomerPulse production dashboard: overview](docs/images/production/overview.png)
 
 ---
 
@@ -92,20 +106,28 @@ evaluates it on future months the model never saw, and ends with a decision.
 
 ## 5. Screenshots
 
-All screenshots are of the actual application running against the actual
-analysis results (local stack).
+These are captures of the **production dashboard**
+(https://customerpulse-web.vercel.app), taken on 2026-10-30 with headless
+Chromium. Each page was captured only after its data had loaded from the live
+API with no error state. The sidebar shows the served run, `f72df6d9`.
 
-| Customer segmentation | SHAP explainability |
+| Customer segmentation | Segment profiles |
 |---|---|
-| ![Segmentation](docs/images/segmentation.png) | ![SHAP](docs/images/explainability.png) |
+| ![Segmentation](docs/images/production/segmentation.png) | ![Segment profiles](docs/images/production/segment-profiles.png) |
 
-| Retention simulator | Model performance |
+| SHAP explainability | Retention simulator |
 |---|---|
-| ![Simulator](docs/images/simulator.png) | ![Model performance](docs/images/model-performance.png) |
+| ![SHAP](docs/images/production/explainability.png) | ![Simulator](docs/images/production/simulator.png) |
+
+| Model performance | Data & methodology |
+|---|---|
+| ![Model performance](docs/images/production/model-performance.png) | ![Methodology](docs/images/production/methodology.png) |
 
 | Churn risk (top-10% cohort, pseudonymous keys) | Phone layout |
 |---|---|
-| ![Churn risk](docs/images/churn-risk.png) | <img src="docs/images/phone-overview.png" width="260" alt="Phone layout"> |
+| ![Churn risk](docs/images/production/churn-risk.png) | <img src="docs/images/production/phone-overview.png" width="260" alt="Phone layout"> |
+
+Earlier captures from the local development stack remain in `docs/images/`.
 
 ## 6. Architecture
 
@@ -474,18 +496,62 @@ extract.
 
 ## 25. Deployment
 
-The target is **Neon Free** (database), **Vercel Hobby** (API from
-`backend/`, dashboard from `frontend/`) and GitHub Actions. The configuration
-is in the repository (`backend/app.py`, `frontend/vercel.json`). Creating the
-Neon and Vercel projects needs the owner to sign in.
+### Production architecture (as deployed)
 
-[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) has the exact steps, including where
-each secret goes, plus the smoke tests.
+```mermaid
+flowchart LR
+    U[Browser] -->|HTTPS| WEB["Vercel project customerpulse-web<br/>React + Vite static build<br/>customerpulse-web.vercel.app"]
+    WEB -->|"HTTPS GET, CORS: dashboard origin only"| API["Vercel project customerpulse-api<br/>FastAPI Python function (backend/app.py)<br/>customerpulse-api.vercel.app"]
+    API -->|"pooled connection, role cp_reader (SELECT only)"| DB[("Neon PostgreSQL 17.11<br/>project customerpulse, ap-southeast-1<br/>schema customerpulse")]
+    GH["GitHub Actions: Analysis (manual)<br/>or local pipeline"] -->|"role cp_writer"| DB
+```
+
+| Component | Production |
+|---|---|
+| Dashboard | Vercel project `customerpulse-web` (root `frontend/`), static Vite build, SPA rewrites and security headers from `frontend/vercel.json` |
+| API | Vercel project `customerpulse-api` (root `backend/`), zero-config FastAPI via `backend/app.py`. Installs core dependencies only, with no pandas or scikit-learn |
+| Database | Neon PostgreSQL 17.11, project `customerpulse`, database `customerpulse`, region `ap-southeast-1`. Roles `cp_migrator` / `cp_writer` / `cp_reader` with production-only passwords |
+| Served results | analysis run `f72df6d9-5830-4c70-bfb9-1c4e1dcde01c` (`succeeded`, commit `9e9f7b6`): 5,852 segmented customers, 3,471 scored customers, 2,784 SHAP rows |
+| Plans | Neon Free and Vercel Hobby, as provisioned by the owner. No paid features or billing |
+
+**Production checks run on 2026-10-30:**
+
+* `/api/v1/health` reports the database as `ok`.
+* `/api/v1/summary` returns run `f72df6d9`.
+* `/api/docs` returns 200.
+* Out-of-range pagination returns 422, and `POST` returns 405.
+* CORS echoes only the dashboard origin; a foreign origin gets no CORS
+  header.
+* All dashboard routes return 200.
+
+**How it is deployed:**
+
+* Both Vercel projects are connected to this GitHub repository through
+  Vercel's Git integration. Vercel commit statuses for `customerpulse-web` and
+  `customerpulse-api` appear on `main`, so pushes to `main` trigger Vercel
+  builds.
+* Database migrations and analysis persistence are **not** automatic. They are
+  run deliberately with `alembic upgrade head` and `customerpulse persist`,
+  either locally or through the manual `Analysis (manual)` workflow.
+
+**Observed performance:**
+
+* The API function currently runs in Vercel's `iad1` region (from the
+  `X-Vercel-Id` header), while Neon is in `ap-southeast-1`.
+* Uncached API calls took about 2.2–2.3 s from India. Responses served from
+  Vercel's CDN cache (`Cache-Control: public, max-age=300`) took about 0.3 s.
+* Moving the function region to `sin1` would shorten the database round trip.
+
+Step-by-step instructions, secret placement and smoke tests are in
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## 26. Verified live links
 
-None yet. This section will list the dashboard, API and API-docs URLs only
-after they pass the production smoke tests.
+| | URL | Verified |
+|---|---|---|
+| Dashboard | https://customerpulse-web.vercel.app | 2026-10-30: all 8 pages render live data, no error states, no horizontal overflow at 1440 px or 390 px |
+| API health | https://customerpulse-api.vercel.app/api/v1/health | 2026-10-30: `{"status":"ok","database":"ok","version":"0.1.0"}` |
+| API docs | https://customerpulse-api.vercel.app/api/docs | 2026-10-30: HTTP 200 |
 
 ## 27. Actual results and data coverage
 
@@ -522,14 +588,19 @@ with static figures in [`reports/figures/`](reports/figures).
 * **SHAP:** explanations are associations, not causes.
 * **Revenue figures:** these are scenarios, not observed savings. They are
   revenue, not profit, unless a margin is set.
+* **Production latency:** the API function (`iad1`) and the database
+  (`ap-southeast-1`) are in different regions, so uncached requests take about
+  2 s.
 
 ## 29. Cost and free-tier notes
 
 The project runs entirely on free tiers:
 
 * **Neon Free:** 1 GB per project, 100 CU-hours per month, scale-to-zero, so
-  there is a short cold start after idling.
-* **Vercel Hobby:** non-commercial use.
+  there is a short cold start after idling. The persisted results are a few
+  MB.
+* **Vercel Hobby:** non-commercial use. Two projects: a static dashboard and
+  one Python function for the API.
 * **GitHub Actions:** free for public repositories.
 
 There are no paid APIs, models, domains or trials, and billing is never
