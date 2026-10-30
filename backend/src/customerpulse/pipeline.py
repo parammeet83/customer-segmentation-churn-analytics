@@ -243,6 +243,8 @@ def stage_churn(cfg: PipelineConfig = DEFAULT_CONFIG) -> dict:
 
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     joblib.dump(exp.selected_model, ARTIFACTS_DIR / "churn_model.joblib")
+    if exp.test_frame is None:
+        raise AssertionError("Experiment did not produce test scores")
     exp.test_frame.to_parquet(PROCESSED_DIR / "test_scores.parquet", index=False)
     deciles = decile_table(exp.test_frame)
     report = {
@@ -419,7 +421,12 @@ def stage_simulate(cfg: PipelineConfig = DEFAULT_CONFIG) -> dict:
     scenarios = {
         name: simulate(
             scores,
-            ScenarioAssumptions(target_fraction=c.top_fraction, horizon_days=r.projection_horizon_days, **params),
+            ScenarioAssumptions(
+                target_fraction=c.top_fraction,
+                horizon_days=r.projection_horizon_days,
+                effectiveness=params["effectiveness"],
+                cost_per_contact=params["cost_per_contact"],
+            ),
             c.horizon_days,
             season,
         )
@@ -432,7 +439,8 @@ def stage_simulate(cfg: PipelineConfig = DEFAULT_CONFIG) -> dict:
             target_fraction=c.top_fraction,
             horizon_days=r.projection_horizon_days,
             ranking="value_at_risk",
-            **r.scenarios["base"],
+            effectiveness=r.scenarios["base"]["effectiveness"],
+            cost_per_contact=r.scenarios["base"]["cost_per_contact"],
         ),
         c.horizon_days,
         season,

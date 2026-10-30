@@ -33,7 +33,7 @@ def _libpq_url(url: str) -> str:
     return url.replace("postgresql+psycopg://", "postgresql://", 1)
 
 
-def role_statements(dbname: str) -> list[sql.Composable]:
+def role_statements(dbname: str) -> list[sql.Composed]:
     s, db = sql.Identifier(SCHEMA), sql.Identifier(dbname)
     mig, wri, rea = (sql.Identifier(r) for r in ROLES)
     return [

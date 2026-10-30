@@ -14,6 +14,7 @@ not causal effects.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -111,7 +112,7 @@ def explain(
 
 def global_importance(out: ShapOutput, rows: pd.DataFrame) -> list[dict]:
     """Mean |SHAP| ranking plus the direction of each feature's association."""
-    res = []
+    res: list[dict[str, Any]] = []
     for j, f in enumerate(out.features):
         v = out.values[:, j]
         x = rows[f].to_numpy(dtype=float)

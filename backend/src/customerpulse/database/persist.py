@@ -306,8 +306,8 @@ def ensure_dataset_version(session: Session, manifest: dict) -> int:
     ds = manifest["dataset"]
     existing = session.scalar(select(DatasetVersion.id).where(DatasetVersion.zip_sha256 == ds["zip_sha256"]))
     if existing:
-        return existing
-    return session.scalar(
+        return int(existing)
+    new_id = session.scalar(
         insert(DatasetVersion)
         .values(
             source_name=ds["source_name"],
@@ -326,6 +326,9 @@ def ensure_dataset_version(session: Session, manifest: dict) -> int:
         )
         .returning(DatasetVersion.id)
     )
+    if new_id is None:
+        raise RuntimeError("Could not create dataset version")
+    return int(new_id)
 
 
 def persist_bundle(bundle: Path | None = None, engine: Engine | None = None) -> str:

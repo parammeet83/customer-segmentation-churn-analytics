@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import uuid
+from typing import Any
 
 from fastapi import HTTPException
 from sqlalchemy import Select, and_, func, select
@@ -16,6 +17,13 @@ from customerpulse.database.models import (
     CustomerSnapshot,
     Segment,
 )
+
+
+def required[T](obj: T | None, what: str) -> T:
+    """Rows guaranteed by foreign keys; a missing one is a server-side error."""
+    if obj is None:
+        raise HTTPException(status_code=500, detail=f"Inconsistent results: {what} missing")
+    return obj
 
 
 def run_info(r: AnalysisRun) -> dict:
@@ -75,7 +83,7 @@ def segment_dict(s: Segment) -> dict:
     }
 
 
-SORTS = {
+SORTS: dict[str, Any] = {
     "risk": ChurnScore.risk_rank.asc(),
     "value_at_risk": ChurnScore.expected_revenue_at_risk.desc(),
     "monetary": CustomerSnapshot.monetary.desc(),
@@ -118,7 +126,7 @@ def customer_row(score: ChurnScore, snap: CustomerSnapshot, names: dict[int, str
 def histogram(db: Session, run_id: uuid.UUID, cluster_id: int, column, bins: list[float]) -> list[dict]:
     """Counts per bin computed in SQL (width_bucket) for one segment."""
     bucket = func.width_bucket(column, array([float(b) for b in bins]))
-    rows = dict(
+    rows: dict[int, int] = dict(
         db.execute(
             select(bucket, func.count())
             .where(CustomerSegment.run_id == run_id, CustomerSegment.cluster_id == cluster_id)

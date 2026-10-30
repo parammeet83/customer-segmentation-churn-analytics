@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: CI only reads the repository. No secrets are used, so
+# pull requests from forks run safely with the `pull_request` trigger.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (lint, types, tests, migrations)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: postgres:17
+        # Disposable CI-only database; trust auth avoids storing any password.
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    env:
+      CUSTOMERPULSE_TEST_ADMIN_URL: postgresql://postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install (locked)
+        run: uv sync --frozen --extra analysis
+      - name: Ephemeral role passwords for the test database
+        run: |
+          for v in CP_MIGRATOR_PASSWORD CP_WRITER_PASSWORD CP_READER_PASSWORD CUSTOMERPULSE_PSEUDONYM_SECRET; do
+            pw=$(python3 -c "import secrets; print(secrets.token_urlsafe(24))")
+            echo "::add-mask::$pw"
+            echo "$v=$pw" >> "$GITHUB_ENV"
+          done
+      - name: Ruff lint
+        run: uv run ruff check .
+      - name: Ruff format check
+        run: uv run ruff format --check .
+      - name: Mypy
+        run: uv run mypy
+      - name: Pytest (data, leakage, segmentation, churn, SHAP, retention, DB roles, API)
+        run: uv run pytest --cov=customerpulse --cov-report=term --cov-report=xml -p no:cacheprovider
+      - name: Migration round trip (upgrade, check, downgrade, upgrade)
+        run: |
+          psql "$CUSTOMERPULSE_TEST_ADMIN_URL" -c "CREATE DATABASE cp_migration_check"
+          export ADMIN_DATABASE_URL=postgresql://postgres@localhost:5432/cp_migration_check
+          export MIGRATOR_DATABASE_URL="postgresql://cp_migrator:${CP_MIGRATOR_PASSWORD}@localhost:5432/cp_migration_check"
+          uv run customerpulse setup-roles
+          uv run alembic upgrade head
+          uv run alembic check
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+      - name: API dependency footprint (no analysis extras needed to serve)
+        run: |
+          uv venv /tmp/apienv --python 3.12
+          uv pip install --quiet --python /tmp/apienv/bin/python .
+          /tmp/apienv/bin/python -c "import customerpulse.api.app as a; import sys; assert 'pandas' not in sys.modules and 'sklearn' not in sys.modules; print('API imports without pandas/sklearn')"
+
+  frontend:
+    name: Frontend (lint, types, unit, build, e2e)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type check
+        run: npm run typecheck
+      - name: Unit and component tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: End-to-end (desktop, tablet, phone; mocked API)
+        run: npm run test:e2e
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+          retention-days: 7
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_COMMENTS: "false"

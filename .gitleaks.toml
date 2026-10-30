@@ -1,0 +1,11 @@
+# Use gitleaks' default rules everywhere. The only exception is the two files
+# of clearly synthetic test fixtures (fake HMAC test secret, fake SHA values).
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Synthetic test fixtures (no real credentials)"
+paths = [
+  '''^backend/tests/fake_bundle\.py$''',
+  '''^frontend/src/test/fixtures\.ts$''',
+]

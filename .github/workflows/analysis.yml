@@ -1,0 +1,103 @@
+name: Analysis (manual)
+
+# Reproduces the full CustomerPulse analysis from the official UCI archive.
+# Online Retail II is a fixed historical dataset, so this runs on demand only;
+# there is no schedule because no new data ever arrives.
+on:
+  workflow_dispatch:
+    inputs:
+      persist:
+        description: "Persist the validated results to the production database (needs the 'production' environment secrets)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: analysis
+  cancel-in-progress: false
+
+jobs:
+  analyse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    # Secrets live in the 'production' environment so they are only exposed
+    # to this manually triggered job on the default branch.
+    environment: production
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Install (locked)
+        run: uv sync --frozen --extra analysis
+
+      - name: Cache the official UCI archive
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: data/raw/online_retail_ii.zip
+          key: uci-online-retail-ii-572e36277c2390fb
+
+      - name: Pseudonymisation secret
+        env:
+          SECRET: ${{ secrets.CUSTOMERPULSE_PSEUDONYM_SECRET }}
+        run: |
+          # Production runs reuse the stored secret so customer keys stay stable;
+          # dry runs use a throwaway secret.
+          if [ -z "$SECRET" ]; then SECRET=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))"); fi
+          echo "::add-mask::$SECRET"
+          echo "CUSTOMERPULSE_PSEUDONYM_SECRET=$SECRET" >> "$GITHUB_ENV"
+
+      - name: Run the full pipeline
+        run: uv run customerpulse run-all
+
+      - name: Verify the archive checksum matched
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          m = json.load(open("../data/interim/dataset_metadata.json"))
+          print("raw rows:", m["raw_rows"], "sha256 match:", m["zip_checksum_matches_recorded"])
+          sys.exit(0 if m["zip_checksum_matches_recorded"] else 1)
+          PY
+
+      - name: Job summary
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          s = json.load(open("../reports/results_summary.json"))
+          c, seg, r = s["churn"], s["segmentation"], s["retention"]
+          sel = c["test"][c["selected_family"]]
+          print("## CustomerPulse analysis run")
+          print(f"- Run: `{s['run']['run_id']}` at commit `{s['run']['code_version']}`")
+          print(f"- Raw rows: {s['dataset']['raw_rows']:,}; purchase lines: {s['cleaning']['purchase_lines']:,}")
+          print(f"- Segments: K={seg['selected_k']}, silhouette {seg['silhouette']:.3f}")
+          print(f"- Selected model: {c['selected_family']}; test ROC-AUC {sel['roc_auc']:.3f}, PR-AUC {sel['pr_auc']:.3f}, recall {sel['recall']:.3f}")
+          print(f"- Top-10% capture {sel['top_decile_per_snapshot']['capture_rate']:.1%}, lift {sel['top_decile_per_snapshot']['lift']:.2f}x")
+          print(f"- Top-10% expected revenue at risk (scenario estimate): GBP {r['cohort']['expected_revenue_at_risk']:,.0f}")
+          PY
+
+      - name: Upload aggregate reports (no customer-level data)
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: customerpulse-reports
+          path: |
+            reports/results_summary.json
+            reports/figures/
+          retention-days: 30
+
+      - name: Persist results (writer role)
+        if: ${{ inputs.persist }}
+        env:
+          WRITER_DATABASE_URL: ${{ secrets.WRITER_DATABASE_URL }}
+          MIGRATOR_DATABASE_URL: ${{ secrets.MIGRATOR_DATABASE_URL }}
+        run: |
+          if [ -z "$WRITER_DATABASE_URL" ] || [ -z "$MIGRATOR_DATABASE_URL" ]; then
+            echo "::error::Production database secrets are not configured in the 'production' environment"; exit 1
+          fi
+          uv run alembic upgrade head
+          uv run customerpulse persist

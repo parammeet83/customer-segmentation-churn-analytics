@@ -57,12 +57,15 @@ def summary(db: DB) -> dict:
     attempt = svc.latest_attempt(db)
     rep = run.reports
     cr, ret = rep["churn_report"], rep["retention_report"]
-    sel = db.scalar(
-        select(ModelMetric).where(
-            ModelMetric.run_id == run.id, ModelMetric.evaluation_split == "test", ModelMetric.is_selected
-        )
+    sel = svc.required(
+        db.scalar(
+            select(ModelMetric).where(
+                ModelMetric.run_id == run.id, ModelMetric.evaluation_split == "test", ModelMetric.is_selected
+            )
+        ),
+        "selected test metrics",
     )
-    ds = db.get(DatasetVersion, run.dataset_version_id)
+    ds = svc.required(db.get(DatasetVersion, run.dataset_version_id), "dataset version")
     segs = db.scalars(select(Segment).where(Segment.run_id == run.id).order_by(Segment.cluster_id)).all()
     bands = db.execute(
         select(
@@ -132,7 +135,7 @@ def summary(db: DB) -> dict:
 @router.get("/data-quality", tags=["methodology"])
 def data_quality(db: DB) -> dict:
     run = svc.latest_successful_run(db)
-    ds = db.get(DatasetVersion, run.dataset_version_id)
+    ds = svc.required(db.get(DatasetVersion, run.dataset_version_id), "dataset version")
     items = db.scalars(select(DataQualityItem).where(DataQualityItem.run_id == run.id)).all()
     rep = run.reports
     return {
@@ -255,7 +258,7 @@ def _paged_customers(
         q = q.where(ChurnScore.risk_band == risk_band)
     if top_decile is not None:
         q = q.where(ChurnScore.in_top_decile == top_decile)
-    total = db.scalar(select(func.count()).select_from(q.subquery()))
+    total = db.scalar(select(func.count()).select_from(q.subquery())) or 0
     rows = db.execute(
         q.order_by(svc.SORTS[sort], ChurnScore.customer_key).offset((page - 1) * page_size).limit(page_size)
     ).all()
