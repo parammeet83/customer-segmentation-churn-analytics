@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual runs make gitleaks scan the full history, not only the pushed range.
+  workflow_dispatch:
 
 # Least privilege: CI only reads the repository. No secrets are used, so
 # pull requests from forks run safely with the `pull_request` trigger.
