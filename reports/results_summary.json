@@ -1,0 +1,783 @@
+{
+  "dataset": {
+    "source_name": "Online Retail II",
+    "doi": "https://doi.org/10.24432/C5CG6D",
+    "licence": "CC BY 4.0",
+    "raw_rows": 1067371,
+    "date_min": "2009-12-01 07:45:00",
+    "date_max": "2011-12-09 12:50:00",
+    "zip_sha256": "572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb"
+  },
+  "cleaning": {
+    "purchase_lines": 776579,
+    "purchase_invoices": 36594,
+    "purchase_customers": 5852,
+    "gross_purchase_value": 17068582.72,
+    "return_lines": 17586,
+    "return_invoices": 7282,
+    "return_value": 709953.43,
+    "date_min": "2009-12-01 07:45:00",
+    "date_max": "2011-12-09 12:50:00",
+    "uk_share_of_purchase_lines": 0.9009
+  },
+  "exclusions": [
+    {
+      "reason": "sheet_overlap_duplicate",
+      "rows": 22523,
+      "share_of_raw": 0.021101
+    },
+    {
+      "reason": "exact_duplicate_line",
+      "rows": 11812,
+      "share_of_raw": 0.011066
+    },
+    {
+      "reason": "invalid_invoice_date",
+      "rows": 0,
+      "share_of_raw": 0.0
+    },
+    {
+      "reason": "missing_customer_id",
+      "rows": 235151,
+      "share_of_raw": 0.220309
+    },
+    {
+      "reason": "missing_stock_code",
+      "rows": 0,
+      "share_of_raw": 0.0
+    },
+    {
+      "reason": "adjustment_invoice",
+      "rows": 0,
+      "share_of_raw": 0.0
+    },
+    {
+      "reason": "non_merchandise_code",
+      "rows": 3660,
+      "share_of_raw": 0.003429
+    },
+    {
+      "reason": "non_positive_price",
+      "rows": 60,
+      "share_of_raw": 5.6e-05
+    },
+    {
+      "reason": "non_cancellation_negative_quantity",
+      "rows": 0,
+      "share_of_raw": 0.0
+    },
+    {
+      "reason": "cancellation_positive_quantity",
+      "rows": 0,
+      "share_of_raw": 0.0
+    },
+    {
+      "reason": "zero_quantity",
+      "rows": 0,
+      "share_of_raw": 0.0
+    }
+  ],
+  "segmentation": {
+    "customers": 5852,
+    "selected_k": 4,
+    "silhouette": 0.36503,
+    "k_table": [
+      {
+        "k": 2,
+        "silhouette": 0.43828,
+        "inertia": 8560.268,
+        "min_cluster_share": 0.39679,
+        "max_cluster_share": 0.60321,
+        "stability_ari": 0.99576,
+        "in_selectable_range": false,
+        "passes_guards": false,
+        "selected": false
+      },
+      {
+        "k": 3,
+        "silhouette": 0.34752,
+        "inertia": 6339.189,
+        "min_cluster_share": 0.20455,
+        "max_cluster_share": 0.40995,
+        "stability_ari": 0.96496,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": false
+      },
+      {
+        "k": 4,
+        "silhouette": 0.36503,
+        "inertia": 4912.819,
+        "min_cluster_share": 0.2013,
+        "max_cluster_share": 0.33664,
+        "stability_ari": 0.95195,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": true
+      },
+      {
+        "k": 5,
+        "silhouette": 0.34224,
+        "inertia": 4094.023,
+        "min_cluster_share": 0.07826,
+        "max_cluster_share": 0.27802,
+        "stability_ari": 0.92891,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": false
+      },
+      {
+        "k": 6,
+        "silhouette": 0.33636,
+        "inertia": 3551.611,
+        "min_cluster_share": 0.07604,
+        "max_cluster_share": 0.25684,
+        "stability_ari": 0.85554,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": false
+      },
+      {
+        "k": 7,
+        "silhouette": 0.30337,
+        "inertia": 3182.646,
+        "min_cluster_share": 0.05656,
+        "max_cluster_share": 0.19498,
+        "stability_ari": 0.80401,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": false
+      },
+      {
+        "k": 8,
+        "silhouette": 0.29505,
+        "inertia": 2895.183,
+        "min_cluster_share": 0.05947,
+        "max_cluster_share": 0.19224,
+        "stability_ari": 0.79013,
+        "in_selectable_range": true,
+        "passes_guards": true,
+        "selected": false
+      },
+      {
+        "k": 9,
+        "silhouette": 0.28992,
+        "inertia": 2652.673,
+        "min_cluster_share": 0.04323,
+        "max_cluster_share": 0.18524,
+        "stability_ari": 0.86749,
+        "in_selectable_range": false,
+        "passes_guards": false,
+        "selected": false
+      },
+      {
+        "k": 10,
+        "silhouette": 0.28879,
+        "inertia": 2460.953,
+        "min_cluster_share": 0.03725,
+        "max_cluster_share": 0.18387,
+        "stability_ari": 0.8715,
+        "in_selectable_range": false,
+        "passes_guards": false,
+        "selected": false
+      }
+    ],
+    "segments": [
+      {
+        "cluster_id": 0,
+        "segment_name": "Champions",
+        "customers": 1178,
+        "share": 0.2012987012987013,
+        "revenue_share": 0.73243644039357,
+        "median": {
+          "recency_days": 16.44375,
+          "frequency": 13.0,
+          "monetary": 4907.594999999999,
+          "tenure_days": 678.4979166666667
+        }
+      },
+      {
+        "cluster_id": 1,
+        "segment_name": "At Risk",
+        "customers": 1459,
+        "share": 0.24931647300068352,
+        "revenue_share": 0.1696130046349859,
+        "median": {
+          "recency_days": 182.35208333333333,
+          "frequency": 5.0,
+          "monetary": 1456.6599999999999,
+          "tenure_days": 619.3472222222222
+        }
+      },
+      {
+        "cluster_id": 2,
+        "segment_name": "Promising Customers",
+        "customers": 1245,
+        "share": 0.2127477785372522,
+        "revenue_share": 0.0613191034762141,
+        "median": {
+          "recency_days": 23.505555555555556,
+          "frequency": 3.0,
+          "monetary": 719.81,
+          "tenure_days": 218.2722222222222
+        }
+      },
+      {
+        "cluster_id": 3,
+        "segment_name": "Hibernating Customers",
+        "customers": 1970,
+        "share": 0.33663704716336296,
+        "revenue_share": 0.03663145149522995,
+        "median": {
+          "recency_days": 400.4868055555555,
+          "frequency": 1.0,
+          "monetary": 276.64,
+          "tenure_days": 438.3854166666667
+        }
+      }
+    ]
+  },
+  "churn": {
+    "definition": {
+      "rule": "A customer active in the 180 days before the cutoff is labelled inactive (churned=1) if they make no qualifying purchase in the 90 days starting at the cutoff.",
+      "lookback_days": 180,
+      "horizon_days": 90,
+      "snapshot_frequency": "monthly (first day of month, 00:00)",
+      "disclaimer": "This predicts future purchase inactivity under a defined historical behavioural rule. It does not establish that a customer has contractually or permanently churned."
+    },
+    "split": {
+      "train": [
+        "2010-06-01",
+        "2010-07-01",
+        "2010-08-01",
+        "2010-09-01",
+        "2010-10-01",
+        "2010-11-01"
+      ],
+      "validation": [
+        "2011-02-01",
+        "2011-03-01",
+        "2011-04-01"
+      ],
+      "test": [
+        "2011-07-01",
+        "2011-08-01",
+        "2011-09-01"
+      ],
+      "purged": [
+        "2010-12-01",
+        "2011-01-01",
+        "2011-05-01",
+        "2011-06-01"
+      ],
+      "horizon_days": 90
+    },
+    "class_balance": [
+      {
+        "partition": "train",
+        "rows": 17119,
+        "customers": 3893,
+        "snapshots": 6,
+        "churn_rate": 0.4548747006250365,
+        "first_cutoff": "2010-06-01",
+        "last_cutoff": "2010-11-01"
+      },
+      {
+        "partition": "validation",
+        "rows": 9985,
+        "customers": 3745,
+        "snapshots": 3,
+        "churn_rate": 0.5803705558337506,
+        "first_cutoff": "2011-02-01",
+        "last_cutoff": "2011-04-01"
+      },
+      {
+        "partition": "test",
+        "rows": 8256,
+        "customers": 3118,
+        "snapshots": 3,
+        "churn_rate": 0.43980135658914726,
+        "first_cutoff": "2011-07-01",
+        "last_cutoff": "2011-09-01"
+      }
+    ],
+    "selected_family": "logistic_regression",
+    "selected_params": {
+      "C": 0.1
+    },
+    "threshold": 0.4146029460793054,
+    "validation_best": {
+      "logistic_regression": {
+        "roc_auc": 0.7751312237320873,
+        "pr_auc": 0.788374959416724,
+        "recall": 0.7501294219154443,
+        "precision": 0.7573170731707317
+      },
+      "hist_gradient_boosting": {
+        "roc_auc": 0.7700414520788845,
+        "pr_auc": 0.7885201571631932,
+        "recall": 0.7501294219154443,
+        "precision": 0.7529880478087649
+      },
+      "random_forest": {
+        "roc_auc": 0.7707568247666391,
+        "pr_auc": 0.7849797776502553,
+        "recall": 0.7501294219154443,
+        "precision": 0.7511664074650077
+      }
+    },
+    "test": {
+      "logistic_regression": {
+        "n": 8256,
+        "positives": 3631,
+        "positive_rate": 0.43980135658914726,
+        "threshold": 0.4146029460793054,
+        "recall": 0.6777747177086202,
+        "precision": 0.6548696114954763,
+        "f1": 0.666125321423738,
+        "f2": 0.6730664041133355,
+        "roc_auc": 0.7673781476326229,
+        "pr_auc": 0.6914076053944199,
+        "brier": 0.19702479985236704,
+        "tp": 2461,
+        "fp": 1297,
+        "tn": 3328,
+        "fn": 1170,
+        "top_fraction": 0.1,
+        "top_selected": 826,
+        "top_precision": 0.8002421307506054,
+        "top_capture_rate": 0.18204351418342055,
+        "top_lift": 1.8195535751795644,
+        "top_decile_per_snapshot": {
+          "fraction": 0.1,
+          "selected": 827,
+          "population": 8256,
+          "selected_share": 0.10016957364341085,
+          "true_churners_selected": 661,
+          "precision": 0.7992744860943168,
+          "capture_rate": 0.18204351418342055,
+          "lift": 1.8173533894780172,
+          "base_rate": 0.43980135658914726
+        }
+      },
+      "hist_gradient_boosting": {
+        "n": 8256,
+        "positives": 3631,
+        "positive_rate": 0.43980135658914726,
+        "threshold": 0.3832334732600171,
+        "recall": 0.7372624621316441,
+        "precision": 0.6297341801928958,
+        "f1": 0.679269221009896,
+        "f2": 0.7129161118508656,
+        "roc_auc": 0.7649554065219172,
+        "pr_auc": 0.6841200131559652,
+        "brier": 0.19785246479064872,
+        "tp": 2677,
+        "fp": 1574,
+        "tn": 3051,
+        "fn": 954,
+        "top_fraction": 0.1,
+        "top_selected": 826,
+        "top_precision": 0.7917675544794189,
+        "top_capture_rate": 0.18011567061415587,
+        "top_lift": 1.8002844752911273,
+        "top_decile_per_snapshot": {
+          "fraction": 0.1,
+          "selected": 827,
+          "population": 8256,
+          "selected_share": 0.10016957364341085,
+          "true_churners_selected": 656,
+          "precision": 0.7932285368802902,
+          "capture_rate": 0.1806664830625172,
+          "lift": 1.8036063895576084,
+          "base_rate": 0.43980135658914726
+        }
+      },
+      "random_forest": {
+        "n": 8256,
+        "positives": 3631,
+        "positive_rate": 0.43980135658914726,
+        "threshold": 0.40558406362663263,
+        "recall": 0.7273478380611402,
+        "precision": 0.6380768301522107,
+        "f1": 0.6797940797940798,
+        "f2": 0.7075496972619622,
+        "roc_auc": 0.7677965566778565,
+        "pr_auc": 0.6816887767865414,
+        "brier": 0.19655850183616289,
+        "tp": 2641,
+        "fp": 1498,
+        "tn": 3127,
+        "fn": 990,
+        "top_fraction": 0.1,
+        "top_selected": 826,
+        "top_precision": 0.7723970944309927,
+        "top_capture_rate": 0.17570917102726522,
+        "top_lift": 1.7562408184032707,
+        "top_decile_per_snapshot": {
+          "fraction": 0.1,
+          "selected": 827,
+          "population": 8256,
+          "selected_share": 0.10016957364341085,
+          "true_churners_selected": 641,
+          "precision": 0.7750906892382105,
+          "capture_rate": 0.17653538969980723,
+          "lift": 1.7623653897963827,
+          "base_rate": 0.43980135658914726
+        }
+      }
+    },
+    "test_per_snapshot": [
+      {
+        "n": 2722,
+        "positives": 1317,
+        "positive_rate": 0.4838354151359295,
+        "threshold": 0.4146029460793054,
+        "recall": 0.662870159453303,
+        "precision": 0.6995192307692307,
+        "f1": 0.6807017543859649,
+        "f2": 0.669889502762431,
+        "roc_auc": 0.7729985921848697,
+        "pr_auc": 0.7300800766908335,
+        "brier": 0.20268019636557985,
+        "tp": 873,
+        "fp": 375,
+        "tn": 1030,
+        "fn": 444,
+        "top_fraction": 0.1,
+        "top_selected": 273,
+        "top_precision": 0.8424908424908425,
+        "top_capture_rate": 0.17463933181473046,
+        "top_lift": 1.7412756820501694,
+        "cutoff": "2011-07-01"
+      },
+      {
+        "n": 2766,
+        "positives": 1226,
+        "positive_rate": 0.4432393347794649,
+        "threshold": 0.4146029460793054,
+        "recall": 0.6851549755301795,
+        "precision": 0.665083135391924,
+        "f1": 0.6749698674166332,
+        "f2": 0.681044267877412,
+        "roc_auc": 0.7713914959428826,
+        "pr_auc": 0.7063014662227043,
+        "brier": 0.19583477702414934,
+        "tp": 840,
+        "fp": 423,
+        "tn": 1117,
+        "fn": 386,
+        "top_fraction": 0.1,
+        "top_selected": 277,
+        "top_precision": 0.8158844765342961,
+        "top_capture_rate": 0.18433931484502447,
+        "top_lift": 1.8407312088856957,
+        "cutoff": "2011-08-01"
+      },
+      {
+        "n": 2768,
+        "positives": 1088,
+        "positive_rate": 0.3930635838150289,
+        "threshold": 0.4146029460793054,
+        "recall": 0.6875,
+        "precision": 0.5998396150761829,
+        "f1": 0.6406852248394004,
+        "f2": 0.6679764243614931,
+        "roc_auc": 0.76109287464986,
+        "pr_auc": 0.6398926893853076,
+        "brier": 0.19265255051489774,
+        "tp": 748,
+        "fp": 499,
+        "tn": 1181,
+        "fn": 340,
+        "top_fraction": 0.1,
+        "top_selected": 277,
+        "top_precision": 0.740072202166065,
+        "top_capture_rate": 0.18841911764705882,
+        "top_lift": 1.882830749628371,
+        "cutoff": "2011-09-01"
+      }
+    ],
+    "seen_vs_unseen": [
+      {
+        "group": "seen_in_train_or_validation",
+        "n": 6967,
+        "positives": 2919,
+        "positive_rate": 0.4189751686522176,
+        "threshold": 0.4146029460793054,
+        "recall": 0.6166495375128469,
+        "precision": 0.6739049045301385,
+        "f1": 0.6440071556350626,
+        "f2": 0.6273088450547153,
+        "roc_auc": 0.7819118505308684,
+        "pr_auc": 0.6941053739711326,
+        "brier": 0.1920381501828284,
+        "tp": 1800,
+        "fp": 871,
+        "tn": 3177,
+        "fn": 1119,
+        "top_fraction": 0.1,
+        "top_selected": 697,
+        "top_precision": 0.8005738880918221,
+        "top_capture_rate": 0.19116135662898254,
+        "top_lift": 1.9107907770934307
+      },
+      {
+        "group": "unseen_customers",
+        "n": 1289,
+        "positives": 712,
+        "positive_rate": 0.552366175329713,
+        "threshold": 0.4146029460793054,
+        "recall": 0.9283707865168539,
+        "precision": 0.6080956761729531,
+        "f1": 0.7348526959421902,
+        "f2": 0.8398983481575604,
+        "roc_auc": 0.692021400891866,
+        "pr_auc": 0.7255382912050284,
+        "brier": 0.22397746722837608,
+        "tp": 661,
+        "fp": 426,
+        "tn": 151,
+        "fn": 51,
+        "top_fraction": 0.1,
+        "top_selected": 129,
+        "top_precision": 0.7906976744186046,
+        "top_capture_rate": 0.14325842696629212,
+        "top_lift": 1.431473739221322
+      }
+    ],
+    "horizon_sensitivity": [
+      {
+        "horizon_days": 60,
+        "n_snapshots": 17,
+        "n_observations": 50852,
+        "first_cutoff": "2010-06-01",
+        "last_cutoff": "2011-10-01",
+        "mean_churn_rate": 0.5882,
+        "min_churn_rate": 0.4695,
+        "max_churn_rate": 0.7094
+      },
+      {
+        "horizon_days": 90,
+        "n_snapshots": 16,
+        "n_observations": 47933,
+        "first_cutoff": "2010-06-01",
+        "last_cutoff": "2011-09-01",
+        "mean_churn_rate": 0.5033,
+        "min_churn_rate": 0.3799,
+        "max_churn_rate": 0.6227
+      },
+      {
+        "horizon_days": 120,
+        "n_snapshots": 15,
+        "n_observations": 45165,
+        "first_cutoff": "2010-06-01",
+        "last_cutoff": "2011-08-01",
+        "mean_churn_rate": 0.4458,
+        "min_churn_rate": 0.3409,
+        "max_churn_rate": 0.5592
+      }
+    ]
+  },
+  "shap": {
+    "explainer": "LinearExplainer (independent masker)",
+    "additivity_max_abs_error": 1.7763568394002505e-15,
+    "top_features": [
+      {
+        "rank": 1,
+        "feature": "frequency_lifetime",
+        "mean_abs_shap": 0.7747170274448056,
+        "direction": "higher values lower risk"
+      },
+      {
+        "rank": 2,
+        "feature": "frequency_prev_90",
+        "mean_abs_shap": 0.4638135666254951,
+        "direction": "higher values lower risk"
+      },
+      {
+        "rank": 3,
+        "feature": "mean_gap_days",
+        "mean_abs_shap": 0.3485755323016671,
+        "direction": "higher values raise risk"
+      },
+      {
+        "rank": 4,
+        "feature": "frequency_trend",
+        "mean_abs_shap": 0.27150934939912563,
+        "direction": "higher values lower risk"
+      },
+      {
+        "rank": 5,
+        "feature": "recency_to_gap_ratio",
+        "mean_abs_shap": 0.26970531643781753,
+        "direction": "higher values raise risk"
+      },
+      {
+        "rank": 6,
+        "feature": "tenure_days",
+        "mean_abs_shap": 0.2660953282271211,
+        "direction": "higher values raise risk"
+      },
+      {
+        "rank": 7,
+        "feature": "monetary_lifetime",
+        "mean_abs_shap": 0.25894393794563825,
+        "direction": "higher values lower risk"
+      },
+      {
+        "rank": 8,
+        "feature": "frequency",
+        "mean_abs_shap": 0.25859405570709626,
+        "direction": "higher values raise risk"
+      },
+      {
+        "rank": 9,
+        "feature": "monetary",
+        "mean_abs_shap": 0.1902093316137731,
+        "direction": "higher values raise risk"
+      },
+      {
+        "rank": 10,
+        "feature": "recency_days",
+        "mean_abs_shap": 0.17840401135781142,
+        "direction": "higher values lower risk"
+      }
+    ]
+  },
+  "retention": {
+    "scoring_cutoff": "2011-12-10",
+    "scored_customers": 3471,
+    "cohort": {
+      "customers": 348,
+      "share_of_scored": 0.10025929127052723,
+      "min_risk": 0.70555765807702,
+      "mean_risk": 0.7530692637300823,
+      "max_risk": 0.9527862710282666,
+      "projected_revenue": 20893.16601901697,
+      "expected_revenue_at_risk": 15610.27601878842,
+      "all_scored_expected_revenue_at_risk": 237624.1366203559,
+      "segment_mix": [
+        {
+          "cluster_id": 1,
+          "segment_name": "At Risk",
+          "customers": 10
+        },
+        {
+          "cluster_id": 2,
+          "segment_name": "Promising Customers",
+          "customers": 156
+        },
+        {
+          "cluster_id": 3,
+          "segment_name": "Hibernating Customers",
+          "customers": 182
+        }
+      ],
+      "tie_policy": "Ranked by probability (desc) then customer key (asc); cohort size = ceil(10% of scored customers)."
+    },
+    "season_factor": {
+      "factor": 0.591062225093168,
+      "available": true,
+      "reference_lookback": [
+        "2010-06-13",
+        "2010-12-10"
+      ],
+      "reference_horizon": [
+        "2010-12-10",
+        "2011-03-10"
+      ]
+    },
+    "scenarios": {
+      "conservative": {
+        "assumptions": {
+          "target_fraction": 0.1,
+          "effectiveness": 0.05,
+          "cost_per_contact": 5.0,
+          "horizon_days": 90,
+          "margin": 1.0,
+          "ranking": "risk"
+        },
+        "targeted_customers": 348,
+        "population": 3471,
+        "average_risk": 0.7530692637300824,
+        "projected_revenue": 20893.16601901697,
+        "expected_revenue_at_risk": 15610.27601878842,
+        "scenario_revenue_retained": 780.513800939421,
+        "campaign_cost": 1740.0,
+        "net_impact": -959.486199060579,
+        "net_impact_basis": "revenue",
+        "break_even_effectiveness": 0.11146503738343563,
+        "label": "Scenario estimate under stated assumptions - not observed savings"
+      },
+      "base": {
+        "assumptions": {
+          "target_fraction": 0.1,
+          "effectiveness": 0.1,
+          "cost_per_contact": 3.0,
+          "horizon_days": 90,
+          "margin": 1.0,
+          "ranking": "risk"
+        },
+        "targeted_customers": 348,
+        "population": 3471,
+        "average_risk": 0.7530692637300824,
+        "projected_revenue": 20893.16601901697,
+        "expected_revenue_at_risk": 15610.27601878842,
+        "scenario_revenue_retained": 1561.027601878842,
+        "campaign_cost": 1044.0,
+        "net_impact": 517.027601878842,
+        "net_impact_basis": "revenue",
+        "break_even_effectiveness": 0.06687902243006139,
+        "label": "Scenario estimate under stated assumptions - not observed savings"
+      },
+      "optimistic": {
+        "assumptions": {
+          "target_fraction": 0.1,
+          "effectiveness": 0.2,
+          "cost_per_contact": 2.0,
+          "horizon_days": 90,
+          "margin": 1.0,
+          "ranking": "risk"
+        },
+        "targeted_customers": 348,
+        "population": 3471,
+        "average_risk": 0.7530692637300824,
+        "projected_revenue": 20893.16601901697,
+        "expected_revenue_at_risk": 15610.27601878842,
+        "scenario_revenue_retained": 3122.055203757684,
+        "campaign_cost": 696.0,
+        "net_impact": 2426.055203757684,
+        "net_impact_basis": "revenue",
+        "break_even_effectiveness": 0.044586014953374255,
+        "label": "Scenario estimate under stated assumptions - not observed savings"
+      }
+    },
+    "value_ranked_base": {
+      "assumptions": {
+        "target_fraction": 0.1,
+        "effectiveness": 0.1,
+        "cost_per_contact": 3.0,
+        "horizon_days": 90,
+        "margin": 1.0,
+        "ranking": "value_at_risk"
+      },
+      "targeted_customers": 348,
+      "population": 3471,
+      "average_risk": 0.4015237215811338,
+      "projected_revenue": 307728.9842625257,
+      "expected_revenue_at_risk": 81035.25864340956,
+      "scenario_revenue_retained": 8103.525864340956,
+      "campaign_cost": 1044.0,
+      "net_impact": 7059.525864340956,
+      "net_impact_basis": "revenue",
+      "break_even_effectiveness": 0.012883280901145202,
+      "label": "Scenario estimate under stated assumptions - not observed savings"
+    }
+  },
+  "run": {
+    "run_id": "9192b0ad-e303-474f-9a84-504488c478e6",
+    "created_at": "2026-10-30T13:01:29+00:00",
+    "code_version": null
+  }
+}

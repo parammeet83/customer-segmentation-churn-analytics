@@ -1,0 +1,52 @@
+# --- Data: raw, interim and processed datasets are never committed ---
+data/*
+!data/README.md
+*.xlsx
+*.zip
+*.parquet
+*.csv
+
+# --- Generated model artefacts (large / regenerable) ---
+artifacts/
+
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Local PostgreSQL cluster used for development ---
+.localdb/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+*.egg-info/
+
+# --- Node / frontend ---
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
+
+# --- Deployment tooling ---
+.vercel/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+
+# --- Reference image (design reference only, never committed) ---
+reference/
