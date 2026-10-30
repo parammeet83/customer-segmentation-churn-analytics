@@ -16,24 +16,24 @@ Only items verified by running code are ticked.
 - [x] `.gitignore` (data, artefacts, secrets, local DB, reference image)
 - [x] Local `.env` with generated secrets (git-ignored)
 - [x] Isolated local PostgreSQL cluster (`.localdb/`, port 55432)
-- [ ] `.env.example`
-- [ ] Ruff / mypy configuration
-- [ ] Frontend scaffold (Vite + React + TS + Tailwind)
-- [ ] All 15 Markdown documents
+- [x] `.env.example`
+- [x] Ruff / mypy configuration
+- [x] Frontend scaffold (Vite + React + TS + Tailwind)
+- [x] All 15 Markdown documents
 
 ## Phase 3 — Dataset processing
 - [x] Acquisition with fixed URL, local-archive fallback, checksum metadata
 - [x] Pandera structural validation
 - [x] Cleaning with priority-ordered exclusion reasons and reconciliation
 - [x] Point-in-time customer features (23 model features)
-- [ ] Tests: cleaning, features, leakage
+- [x] Tests: cleaning, features, leakage
 
 ## Phase 4 — Segmentation
 - [x] log1p + StandardScaler, K = 2..10 silhouette, inertia, stability ARI
 - [x] Guarded K selection (selected K = 4, silhouette 0.365)
 - [x] Rule-based segment naming + recommended actions
 - [x] PCA projection, figures
-- [ ] Tests
+- [x] Tests
 
 ## Phase 5 — Churn prediction
 - [x] Monthly snapshots, 90-day inactivity labels, horizon sensitivity (60/90/120)
@@ -41,37 +41,43 @@ Only items verified by running code are ticked.
 - [x] Logistic regression, random forest, HistGradientBoosting with class weights
 - [x] Validation-only selection and threshold; single test evaluation
 - [x] Top-decile precision, capture, lift; per-snapshot and seen/unseen customer analysis
-- [ ] Tests
+- [x] Tests
 
 ## Phase 6 — SHAP and retention
 - [x] LinearExplainer / TreeExplainer, aggregated to original features, additivity check
 - [x] Global ranking, beeswarm sample, local top-decile explanations
 - [x] Revenue projection, seasonal factor, cap, top-10% cohort, scenarios
 - [x] Value-aware ranking comparison
-- [ ] Tests
+- [x] Tests
 
 ## Phase 7 — Database and backend
-- [ ] SQLAlchemy models + Alembic migration
-- [ ] Least-privilege roles (migrator / writer / reader) + permission test
-- [ ] `customerpulse persist` (transactional, run status)
-- [ ] FastAPI read-only API under `/api/v1`
-- [ ] API tests
+- [x] SQLAlchemy models + Alembic migration
+- [x] Least-privilege roles (migrator / writer / reader) + permission test
+- [x] `customerpulse persist` (transactional, run status)
+- [x] FastAPI read-only API under `/api/v1`
+- [x] API tests
 
 ## Phase 8 — Frontend
-- [ ] Design system from reference (navy, grid, gold, red/gold/teal)
-- [ ] 8 pages wired to the API with loading/error/empty states
-- [ ] Retention simulator (client-side recalculation)
-- [ ] Vitest + Playwright tests
+- [x] Design system from reference (navy, grid, gold, red/gold/teal)
+- [x] 8 pages wired to the API with loading/error/empty states
+- [x] Retention simulator (client-side recalculation)
+- [x] Vitest + Playwright tests
 
 ## Phase 9 — CI
-- [ ] CI workflow (lint, types, tests, build, migrations, secret scan)
-- [ ] Manual `workflow_dispatch` analysis workflow
-- [ ] Verified green run
+- [x] CI workflow (lint, types, tests, build, migrations, secret scan)
+- [x] Manual `workflow_dispatch` analysis workflow (defined; first GitHub run pending)
+- [x] Verified green run (CI run 41064961471: backend 95 tests, frontend 19 + 39 e2e, gitleaks clean)
 
 ## Phase 10 — Deployment
-- [ ] Neon Free project (owner authorisation required)
-- [ ] Vercel API + frontend projects (owner authorisation required)
-- [ ] Production smoke tests
+- [x] Deployment configuration in repo (`backend/app.py`, `backend/.vercelignore`, `frontend/vercel.json`)
+- [x] Step-by-step guide with secret placement (`docs/DEPLOYMENT.md`)
+- [ ] Neon Free project (**blocked: owner must sign in to Neon**)
+- [ ] Vercel API + frontend projects (**blocked: owner must sign in to Vercel**)
+- [ ] Production smoke tests (after deployment)
 
 ## Phase 11 — Final verification
-- [ ] Full test suite, secret scan, 15 docs reviewed, screenshots, push
+- [x] Deterministic re-run at a committed SHA (results byte-identical apart from run id/time/SHA)
+- [x] Full local test suite, lint, types
+- [x] README with real screenshots and results; 15 Markdown documents
+- [x] Commits pushed with the correct identity, no co-author trailers
+- [ ] Live production verification (after deployment)

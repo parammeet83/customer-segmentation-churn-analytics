@@ -74,16 +74,16 @@ Training never runs inside a web request. The API only reads the latest
 | Phase | Status |
 |---|---|
 | 1. Inspection and planning | Done (environment, dataset, licence, DOI verified) |
-| 2. Project foundation | In progress (backend done; frontend, docs pending) |
-| 3. Dataset processing | Done (tests pending) |
-| 4. K-Means segmentation | Done (tests pending) |
-| 5. Churn prediction | Done (tests pending) |
-| 6. SHAP and retention | Done (tests pending) |
-| 7. Database and backend | Not started |
-| 8. Frontend | Not started |
-| 9. CI and reproducibility | Not started |
-| 10. Deployment | Not started (needs Neon/Vercel account authorisation) |
-| 11. Final verification | Not started |
+| 2. Project foundation | Done |
+| 3. Dataset processing | Done, tested |
+| 4. K-Means segmentation | Done, tested (K = 4, silhouette 0.365) |
+| 5. Churn prediction | Done, tested (test ROC-AUC 0.767, top-10% lift 1.82×) |
+| 6. SHAP and retention | Done, tested |
+| 7. Database and backend | Done, tested (local PostgreSQL 17; roles verified) |
+| 8. Frontend | Done, tested (8 pages; desktop/tablet/phone) |
+| 9. CI and reproducibility | Done (CI green; manual analysis workflow defined) |
+| 10. Deployment | Prepared; **blocked on owner sign-in to Neon and Vercel** |
+| 11. Final verification | Done locally; production verification pending deployment |
 
 See `TASKS.md` for the detailed checklist.
 
